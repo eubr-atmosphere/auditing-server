@@ -18,7 +18,7 @@ public class Auditing {
     private final Logger LOGGER = Logger.getLogger(Auditing.class);
 
     @RequestMapping(method = RequestMethod.POST)
-    public void createCompute(
+    public void registerMessage(
             @RequestBody AuditingMessage message)
             throws FogbowException {
 

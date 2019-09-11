@@ -12,6 +12,7 @@ import cloud.fogbow.common.util.SerializedEntityHolder;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -21,7 +22,7 @@ public class Compute {
     private final String ID_SEPARATOR = "@";
 
     @OneToMany
-    private List<Ip> ipAddresses;
+    private Map<String, List<Ip>> ipAddresses;
 
     @Column
     @Size(max = SystemUser.SERIALIZED_SYSTEM_USER_MAX_SIZE)
@@ -37,7 +38,7 @@ public class Compute {
     @Id
     private String id;
 
-    public Compute(List<Ip> ipAddresses, SystemUser systemUser, String instanceId) {
+    public Compute(Map<String, List<Ip>>ipAddresses, SystemUser systemUser, String instanceId) {
         Properties properties = PropertiesUtil.readProperties(HomeDir.getPath() + Constants.CONF_FILE_KEY);
         this.ipAddresses = ipAddresses;
         this.systemUser = systemUser;
@@ -45,11 +46,35 @@ public class Compute {
         this.id = instanceId + ID_SEPARATOR + properties.getProperty(Constants.SITE_KEY);
     }
 
-    public List<Ip> getIpAddresses() {
+    public Compute(Map<String, List<Ip>> ipAddresses, String systemUser, String instanceId) {
+        Properties properties = PropertiesUtil.readProperties(HomeDir.getPath() + Constants.CONF_FILE_KEY);
+        this.ipAddresses = ipAddresses;
+        this.serializedSystemUser = systemUser;
+        this.instanceId = instanceId;
+        this.id = instanceId + ID_SEPARATOR + properties.getProperty(Constants.SITE_KEY);
+    }
+
+    public boolean hasNetwork(String networkId) {
+        return this.getIpAddresses().containsKey(networkId);
+    }
+
+    public boolean hasIp(String networkId, Long id) {
+        if(!this.getIpAddresses().containsKey(networkId)) {
+            return false;
+        }
+        for(Ip ip: this.getIpAddresses().get(networkId)) {
+            if(ip.getId().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Map<String, List<Ip>> getIpAddresses() {
         return ipAddresses;
     }
 
-    public void setIpAddresses(List<Ip> ipAddresses) {
+    public void setIpAddresses(Map<String, List<Ip>> ipAddresses) {
         this.ipAddresses = ipAddresses;
     }
 
