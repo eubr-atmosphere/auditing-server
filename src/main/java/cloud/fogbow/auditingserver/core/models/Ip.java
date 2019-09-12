@@ -25,9 +25,6 @@ public class Ip implements Serializable {
     @Column
     private Timestamp downTime;
 
-    @ManyToMany
-    List<IpGroup> ipGroups;
-
     public Ip(String address, Timestamp upTime) {
         this.address = address;
         this.upTime = upTime;
@@ -37,14 +34,6 @@ public class Ip implements Serializable {
         this.address = address;
         this.upTime = upTime;
         this.downTime = downTime;
-    }
-
-    public List<IpGroup> getIpGroups() {
-        return ipGroups;
-    }
-
-    public void setIpGroups(List<IpGroup> ipGroups) {
-        this.ipGroups = ipGroups;
     }
 
     public Long getId() {

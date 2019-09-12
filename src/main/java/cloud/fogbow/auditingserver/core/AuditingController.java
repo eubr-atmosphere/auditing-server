@@ -31,16 +31,16 @@ public class AuditingController {
             String id = compute.getId() + "@" + site;
             Compute savedCompute = databaseManager.getCompute(id);
             for(String networkId: compute.getIpAddresses().keySet()) {
-                for(Ip ip : compute.getIpAddresses().get(networkId).getIps()) {
+                for(Ip ip : compute.getIpAddresses().get(networkId)) {
                     if(savedCompute != null) {
                         if(!savedCompute.hasIp(networkId, ip.getAddress())) {
                             ip.setUpTime(messageTimestamp);
                             if(savedCompute.hasNetwork(networkId)) {
-                                compute.getIpAddresses().get(networkId).getIps().add(ip);
+                                compute.getIpAddresses().get(networkId).add(ip);
                             } else {
                                 List<Ip> ips = new ArrayList<>();
                                 ips.add(ip);
-                                compute.getIpAddresses().put(networkId, new IpGroup(ips));
+                                compute.getIpAddresses().put(networkId, ips);
                             }
                         }
                         databaseManager.saveIp(ip);
@@ -56,7 +56,7 @@ public class AuditingController {
 
             if(savedCompute != null) {
                 for(String networkId: savedCompute.getIpAddresses().keySet()) {
-                    for(Ip ip: savedCompute.getIpAddresses().get(networkId).getIps()) {
+                    for(Ip ip: savedCompute.getIpAddresses().get(networkId)) {
                         if(!compute.hasIp(networkId, ip.getAddress())) {
                             ip.setDownTime(messageTimestamp);
                             databaseManager.saveIp(ip);
@@ -91,7 +91,7 @@ public class AuditingController {
                         }
                     }
                     for(String networkId : savedCompute.getIpAddresses().keySet()) {
-                        for(Ip ip: savedCompute.getIpAddresses().get(networkId).getIps()) {
+                        for(Ip ip: savedCompute.getIpAddresses().get(networkId)) {
                             if(!federatedNetwork.hasIp(computeId, ip.getAddress())) {
                                 ip.setDownTime(messageTimestamp);
                                 databaseManager.saveIp(ip);
