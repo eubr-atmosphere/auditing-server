@@ -22,7 +22,7 @@ public class Compute {
     private final String ID_SEPARATOR = "@";
 
     @ElementCollection
-    private Map<String, List<Ip>> ipAddresses;
+    private Map<String, IpGroup> ipAddresses;
 
     @Column
     @OneToMany
@@ -42,7 +42,7 @@ public class Compute {
     @Id
     private String id;
 
-    public Compute(Map<String, List<Ip>>ipAddresses, SystemUser systemUser, String instanceId) {
+    public Compute(Map<String, IpGroup>ipAddresses, SystemUser systemUser, String instanceId) {
         Properties properties = PropertiesUtil.readProperties(HomeDir.getPath() + Constants.CONF_FILE_KEY);
         this.ipAddresses = ipAddresses;
         this.systemUser = systemUser;
@@ -50,7 +50,7 @@ public class Compute {
         this.id = instanceId + ID_SEPARATOR + properties.getProperty(Constants.SITE_KEY);
     }
 
-    public Compute(Map<String, List<Ip>> ipAddresses, String systemUser, String instanceId) throws UnexpectedException{
+    public Compute(Map<String, IpGroup> ipAddresses, String systemUser, String instanceId) throws UnexpectedException{
         Properties properties = PropertiesUtil.readProperties(HomeDir.getPath() + Constants.CONF_FILE_KEY);
         this.ipAddresses = ipAddresses;
         this.serializedSystemUser = systemUser;
@@ -83,7 +83,7 @@ public class Compute {
     }
 
     public boolean hasIp(String networkId, String address) {
-        for(Ip ip: this.getIpAddresses().get(networkId)) {
+        for(Ip ip: this.getIpAddresses().get(networkId).getIps()) {
             if(ip.getAddress().equals(address)) {
                 return true;
             }
@@ -98,7 +98,7 @@ public class Compute {
 
     public boolean hasIp(String address) {
         for(String networkId: this.getIpAddresses().keySet()) {
-            for(Ip ip : this.getIpAddresses().get(networkId)) {
+            for(Ip ip : this.getIpAddresses().get(networkId).getIps()) {
                 if(ip.getAddress().equals(address)) {
                     return true;
                 }
@@ -112,11 +112,11 @@ public class Compute {
         return false;
     }
 
-    public Map<String, List<Ip>> getIpAddresses() {
+    public Map<String, IpGroup> getIpAddresses() {
         return ipAddresses;
     }
 
-    public void setIpAddresses(Map<String, List<Ip>> ipAddresses) {
+    public void setIpAddresses(Map<String, IpGroup> ipAddresses) {
         this.ipAddresses = ipAddresses;
     }
 
