@@ -1,12 +1,16 @@
 package cloud.fogbow.auditingserver.core.models;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "ip_table")
-public class Ip {
+public class Ip implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     @Column
     @GeneratedValue (strategy = GenerationType.AUTO)
     @Id
@@ -21,6 +25,9 @@ public class Ip {
     @Column
     private Timestamp downTime;
 
+    @ManyToMany
+    List<IpGroup> ipGroups;
+
     public Ip(String address, Timestamp upTime) {
         this.address = address;
         this.upTime = upTime;
@@ -30,6 +37,14 @@ public class Ip {
         this.address = address;
         this.upTime = upTime;
         this.downTime = downTime;
+    }
+
+    public List<IpGroup> getIpGroups() {
+        return ipGroups;
+    }
+
+    public void setIpGroups(List<IpGroup> ipGroups) {
+        this.ipGroups = ipGroups;
     }
 
     public Long getId() {

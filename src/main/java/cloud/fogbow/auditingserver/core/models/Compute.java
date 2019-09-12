@@ -21,8 +21,12 @@ import java.util.Properties;
 public class Compute {
     private final String ID_SEPARATOR = "@";
 
+    @ElementCollection
+    private Map<String, IpGroup> ipAddresses;
+
+    @Column
     @OneToMany
-    private Map<String, List<Ip>> ipAddresses;
+    private List<Ip> federatedIpAddresses;
 
     @Column
     @Size(max = SystemUser.SERIALIZED_SYSTEM_USER_MAX_SIZE)
@@ -38,7 +42,7 @@ public class Compute {
     @Id
     private String id;
 
-    public Compute(Map<String, List<Ip>>ipAddresses, SystemUser systemUser, String instanceId) {
+    public Compute(Map<String, IpGroup>ipAddresses, SystemUser systemUser, String instanceId) {
         Properties properties = PropertiesUtil.readProperties(HomeDir.getPath() + Constants.CONF_FILE_KEY);
         this.ipAddresses = ipAddresses;
         this.systemUser = systemUser;
@@ -46,35 +50,73 @@ public class Compute {
         this.id = instanceId + ID_SEPARATOR + properties.getProperty(Constants.SITE_KEY);
     }
 
-    public Compute(Map<String, List<Ip>> ipAddresses, String systemUser, String instanceId) {
+    public Compute(Map<String, IpGroup> ipAddresses, String systemUser, String instanceId) throws UnexpectedException{
         Properties properties = PropertiesUtil.readProperties(HomeDir.getPath() + Constants.CONF_FILE_KEY);
         this.ipAddresses = ipAddresses;
         this.serializedSystemUser = systemUser;
         this.instanceId = instanceId;
         this.id = instanceId + ID_SEPARATOR + properties.getProperty(Constants.SITE_KEY);
+        deserializeSystemUser();
+    }
+
+    public Compute(String serializedSystemUser, String instanceId) throws UnexpectedException{
+        this.serializedSystemUser = serializedSystemUser;
+        this.instanceId = instanceId;
+        deserializeSystemUser();
+    }
+
+    public Compute(SystemUser systemUser, String instanceId) {
+        this.systemUser = systemUser;
+        this.instanceId = instanceId;
+    }
+
+    public List<Ip> getFederatedIpAddresses() {
+        return federatedIpAddresses;
+    }
+
+    public void setFederatedIpAddresses(List<Ip> federatedIpAddresses) {
+        this.federatedIpAddresses = federatedIpAddresses;
     }
 
     public boolean hasNetwork(String networkId) {
         return this.getIpAddresses().containsKey(networkId);
     }
 
-    public boolean hasIp(String networkId, Long id) {
-        if(!this.getIpAddresses().containsKey(networkId)) {
-            return false;
+    public boolean hasIp(String networkId, String address) {
+        for(Ip ip: this.getIpAddresses().get(networkId).getIps()) {
+            if(ip.getAddress().equals(address)) {
+                return true;
+            }
         }
-        for(Ip ip: this.getIpAddresses().get(networkId)) {
-            if(ip.getId().equals(id)) {
+        for(Ip ip: this.getFederatedIpAddresses()) {
+            if(ip.getAddress().equals(address)) {
                 return true;
             }
         }
         return false;
     }
 
-    public Map<String, List<Ip>> getIpAddresses() {
+    public boolean hasIp(String address) {
+        for(String networkId: this.getIpAddresses().keySet()) {
+            for(Ip ip : this.getIpAddresses().get(networkId).getIps()) {
+                if(ip.getAddress().equals(address)) {
+                    return true;
+                }
+            }
+        }
+        for(Ip ip: this.getFederatedIpAddresses()) {
+            if(ip.getAddress().equals(address)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Map<String, IpGroup> getIpAddresses() {
         return ipAddresses;
     }
 
-    public void setIpAddresses(Map<String, List<Ip>> ipAddresses) {
+    public void setIpAddresses(Map<String, IpGroup> ipAddresses) {
         this.ipAddresses = ipAddresses;
     }
 

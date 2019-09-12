@@ -4,6 +4,7 @@ public class Messages {
 
     public static class Api {
         public static final String REGISTERING_AUDITING_MESSAGE = "Registering a new auditing message";
+        public static final String PROCESSING_GET_COMPUTES = "Processing get computes";
     }
 
     public static class Exception {

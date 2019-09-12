@@ -1,6 +1,7 @@
 package cloud.fogbow.auditingserver.api.request;
 
 import cloud.fogbow.auditingserver.api.response.ComputeResponse;
+import cloud.fogbow.auditingserver.core.ApplicationFacade;
 import cloud.fogbow.auditingserver.util.Constants;
 import cloud.fogbow.auditingserver.util.Messages;
 import cloud.fogbow.common.exceptions.FogbowException;
@@ -23,12 +24,12 @@ public class Compute {
     public ResponseEntity<List<ComputeResponse>> getAllComputes()
             throws FogbowException {
         try {
-            LOGGER.debug(Messages.Api.);
-            List<InstanceStatus> computeInstanceStatus =
-                    ApplicationFacade.getInstance().getAllInstancesStatus(systemUserToken, ResourceType.COMPUTE);
-            return new ResponseEntity<>(computeInstanceStatus, HttpStatus.OK);
+            LOGGER.debug(Messages.Api.PROCESSING_GET_COMPUTES);
+            List<ComputeResponse> computeInstances =
+                    ApplicationFacade.getInstance().getAllComputes();
+            return new ResponseEntity<>(computeInstances, HttpStatus.OK);
         } catch (Exception e) {
-            LOGGER.debug(String.format(Messages.Exception.GENERIC_EXCEPTION, e.getMessage()), e);
+            LOGGER.debug(e);
             throw e;
         }
     }

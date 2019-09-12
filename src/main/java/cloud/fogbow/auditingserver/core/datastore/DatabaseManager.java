@@ -3,21 +3,15 @@ package cloud.fogbow.auditingserver.core.datastore;
 import cloud.fogbow.auditingserver.core.datastore.repositories.ComputeRepository;
 import cloud.fogbow.auditingserver.core.datastore.repositories.IpRepository;
 import cloud.fogbow.auditingserver.core.models.Compute;
-import cloud.fogbow.auditingserver.core.models.Ip;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import cloud.fogbow.auditingserver.core.models.Ip;;
 
 import java.util.List;
 
-@Component
 public class DatabaseManager {
 
     private static DatabaseManager instance;
 
-    @Autowired
     private IpRepository ipRepository;
-
-    @Autowired
     private ComputeRepository computeRepository;
 
     private DatabaseManager() {
@@ -31,6 +25,22 @@ public class DatabaseManager {
             }
             return instance;
         }
+    }
+
+    public IpRepository getIpRepository() {
+        return ipRepository;
+    }
+
+    public void setIpRepository(IpRepository ipRepository) {
+        this.ipRepository = ipRepository;
+    }
+
+    public ComputeRepository getComputeRepository() {
+        return computeRepository;
+    }
+
+    public void setComputeRepository(ComputeRepository computeRepository) {
+        this.computeRepository = computeRepository;
     }
 
     public Compute getCompute(String id) {
@@ -47,5 +57,9 @@ public class DatabaseManager {
 
     public List<Compute> getAllComputes() {
         return computeRepository.findAll();
+    }
+
+    public Ip getIpByAddress(String address) {
+        return ipRepository.findByAddress(address);
     }
 }
