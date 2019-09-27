@@ -44,7 +44,7 @@ public class DatabaseManager {
     }
 
     public Compute getCompute(String id) {
-        return computeRepository.getOne(id);
+        return computeRepository.findById(id).orElse(null);
     }
 
     public void saveCompute(Compute compute) {

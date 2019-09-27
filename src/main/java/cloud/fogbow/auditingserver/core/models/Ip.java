@@ -25,6 +25,8 @@ public class Ip implements Serializable {
     @Column
     private Timestamp downTime;
 
+    public Ip() {
+    }
     public Ip(String address, Timestamp upTime) {
         this.address = address;
         this.upTime = upTime;

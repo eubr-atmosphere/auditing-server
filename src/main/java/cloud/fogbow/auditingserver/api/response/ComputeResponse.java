@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ComputeResponse {
     private String username;
-    private Map<String, IpGroup> ipAddresses;
+    private Map<String, IpGroup > ipAddresses;
     private List<Ip> federatedIpAddresses;
 
     public ComputeResponse(String username, Map<String, IpGroup> ipAddresses, List<Ip> federatedIpAddresses) {

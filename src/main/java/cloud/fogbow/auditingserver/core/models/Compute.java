@@ -42,6 +42,9 @@ public class Compute {
     @Id
     private String id;
 
+    public Compute() {
+    }
+
     public Compute(Map<String, IpGroup>ipAddresses, SystemUser systemUser, String instanceId) {
         Properties properties = PropertiesUtil.readProperties(HomeDir.getPath() + Constants.CONF_FILE_KEY);
         this.ipAddresses = ipAddresses;

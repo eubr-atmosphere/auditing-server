@@ -1,5 +1,6 @@
 package cloud.fogbow.auditingserver.api.request;
 
+import cloud.fogbow.auditingserver.api.request.entity.AuditingMessageRequest;
 import cloud.fogbow.auditingserver.core.ApplicationFacade;
 import cloud.fogbow.auditingserver.core.models.AuditingMessage;
 import cloud.fogbow.auditingserver.util.Constants;
@@ -19,12 +20,12 @@ public class Auditing {
 
     @RequestMapping(method = RequestMethod.POST)
     public void registerMessage(
-            @RequestBody AuditingMessage message)
+            @RequestBody AuditingMessageRequest message)
             throws FogbowException {
 
         try {
             LOGGER.info(Messages.Api.REGISTERING_AUDITING_MESSAGE);
-            ApplicationFacade.getInstance().registerMessage(message);
+            ApplicationFacade.getInstance().registerMessage(message.getAuditingMessage());
         } catch (Exception e) {
             LOGGER.debug(e);
             throw e;

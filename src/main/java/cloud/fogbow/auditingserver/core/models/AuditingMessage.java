@@ -1,5 +1,7 @@
 package cloud.fogbow.auditingserver.core.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
@@ -7,6 +9,8 @@ import java.util.Objects;
 public class AuditingMessage {
     private List<Compute> activeComputes;
     private List<FederatedNetwork> activeFederatedNetworks;
+
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSS")
     private Timestamp currentTimestamp;
     private String fogbowSite;
 

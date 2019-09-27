@@ -28,7 +28,7 @@ public class AuditingController {
 
     private void processComputes(List<Compute> computes, String site, Timestamp messageTimestamp) {
         for(Compute compute: computes) {
-            String id = compute.getId() + "@" + site;
+            String id = compute.getId();
             Compute savedCompute = databaseManager.getCompute(id);
             for(String networkId: compute.getIpAddresses().keySet()) {
                 for(Ip ip : compute.getIpAddresses().get(networkId).getIps()) {
