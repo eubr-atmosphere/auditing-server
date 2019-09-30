@@ -22,11 +22,11 @@ public class AuditingController {
         Timestamp messageTimestamp = message.getCurrentTimestamp();
         String site = message.getFogbowSite();
 
-        processComputes(activeComputes, site, messageTimestamp);
+        processComputes(activeComputes, messageTimestamp);
         processFednets(activeFednets, site, messageTimestamp);
     }
 
-    private void processComputes(List<Compute> computes, String site, Timestamp messageTimestamp) {
+    private void processComputes(List<Compute> computes, Timestamp messageTimestamp) {
         for(Compute compute: computes) {
             String id = compute.getId();
             Compute savedCompute = databaseManager.getCompute(id);
@@ -45,7 +45,8 @@ public class AuditingController {
                         }
                         databaseManager.saveIp(ip);
                     } else {
-                        ip = databaseManager.getIpByAddress(ip.getAddress());
+                        if(databaseManager.getIpByAddress(ip.getAddress()) != null)
+                            ip = databaseManager.getIpByAddress(ip.getAddress());
                         ip.setUpTime(messageTimestamp);
                         databaseManager.saveIp(ip);
                         databaseManager.saveCompute(compute);
