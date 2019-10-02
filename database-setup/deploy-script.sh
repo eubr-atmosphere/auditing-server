@@ -12,7 +12,7 @@ DB_PASSWORD=$(grep ^db_password $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}
 
 DB_NAME=fogbowauditing
 
-DB_DATA_DIR=/home/ubuntu/data
+DB_DATA_DIR=/home/ubuntu/auditing/data
 mkdir -p $DB_DATA_DIR
 CONTAINER_DATA_DIR="/var/lib/postgresql/data"
 
