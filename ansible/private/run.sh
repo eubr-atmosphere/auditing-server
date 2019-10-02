@@ -1,11 +1,14 @@
 #!/bin/bash
 
-cd auditing
+cd /home/ubuntu/auditing
 git clone https://github.com/eubr-atmosphere/auditing-server.git
 mv general.conf auditing-server/database-setup
-bash auditing-server/database-setup/deploy-script.sh
+cd auditing-server/database-setup
+bash deploy-script.sh
 
-rm auditing-server
+cd /home/ubuntu/auditing
+
+sudo rm -rf auditing-server
 
 image=eubraatmosphere/auditing-server:$1
 sudo docker pull $image

@@ -5,14 +5,14 @@ GENERAL_CONF_FILE_PATH="general.conf"
 IMAGE_NAME="eubraatmosphere/auditing-database"
 CONTAINER_NAME="auditing-database"
 
-CONTAINER_PORT="5432"
+CONTAINER_PORT="8083"
 
 DB_USER="auditinguser"
 DB_PASSWORD=$(grep ^db_password $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 
 DB_NAME=fogbowauditing
 
-DB_DATA_DIR=$DIR_PATH/"data"
+DB_DATA_DIR=/home/ubuntu/data
 mkdir -p $DB_DATA_DIR
 CONTAINER_DATA_DIR="/var/lib/postgresql/data"
 
