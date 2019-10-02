@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cd auditing
 git clone https://github.com/eubr-atmosphere/auditing-server.git
 mv general.conf auditing-server/database-setup
 bash auditing-server/database-setup/deploy-script.sh
