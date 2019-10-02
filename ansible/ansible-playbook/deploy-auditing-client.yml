@@ -1,0 +1,12 @@
+---
+- hosts: client-machine
+  vars:               
+    run: bash -x auditing/run.sh v1
+  tasks:     
+    - name: Copy Files
+      copy: src="../private/" dest="/home/ubuntu/auditing"         
+
+    - name: Run
+      shell: "{{ run }}"
+      become: yes
+

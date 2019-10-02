@@ -1,0 +1,1 @@
+sudo docker push eubraatmosphere/auditing-server:$1
