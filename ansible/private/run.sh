@@ -16,4 +16,5 @@ container_id=`sudo docker run --name auditing-server -idt $image`
 
 sudo docker exec $container_id /bin/bash -c "mkdir src/main/resources/private"
 sudo docker cp ./auditing-server.conf $container_id:/root/auditing-server/src/main/resources/private
+sudo docker cp ./application.properties $container_id:/root/auditing-server/src/main/resources/
 sudo docker exec $container_id /bin/bash -c "mvn spring-boot:run -X > log.out 2> log.err" &
