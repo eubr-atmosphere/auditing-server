@@ -1,11 +1,11 @@
 package cloud.fogbow.auditingserver.core;
 
+import cloud.fogbow.auditingserver.api.request.entities.ComputeRequest;
 import cloud.fogbow.auditingserver.core.datastore.DatabaseManager;
 import cloud.fogbow.auditingserver.core.models.*;
-import cloud.fogbow.common.exceptions.UnexpectedException;
+import cloud.fogbow.common.exceptions.FogbowException;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AuditingController {
@@ -16,98 +16,67 @@ public class AuditingController {
         databaseManager = DatabaseManager.getInstance();
     }
 
-    public void processMessage(AuditingMessage message) throws UnexpectedException{
-        List<Compute> activeComputes = message.getActiveComputes();
-        List<FederatedNetwork> activeFednets = message.getActiveFederatedNetworks();
-        Timestamp messageTimestamp = message.getCurrentTimestamp();
-        String site = message.getFogbowSite();
-
-        processComputes(activeComputes, messageTimestamp);
-        processFednets(activeFednets, site, messageTimestamp);
-    }
-
-    private void processComputes(List<Compute> computes, Timestamp messageTimestamp) {
-        for(Compute compute: computes) {
-            String id = compute.getId();
-            Compute savedCompute = databaseManager.getCompute(id);
-            for(String networkId: compute.getIpAddresses().keySet()) {
-                for(Ip ip : compute.getIpAddresses().get(networkId).getIps()) {
-                    if(savedCompute != null) {
-                        if(!savedCompute.hasIp(networkId, ip.getAddress())) {
-                            ip.setUpTime(messageTimestamp);
-                            if(savedCompute.hasNetwork(networkId)) {
-                                compute.getIpAddresses().get(networkId).getIps().add(ip);
-                            } else {
-                                List<Ip> ips = new ArrayList<>();
-                                ips.add(ip);
-                                compute.getIpAddresses().put(networkId, new IpGroup(ips));
-                            }
-                        }
-                        databaseManager.saveIp(ip);
-                    } else {
-                        if(databaseManager.getIpByAddress(ip.getAddress()) != null)
-                            ip = databaseManager.getIpByAddress(ip.getAddress());
-                        ip.setUpTime(messageTimestamp);
-                        databaseManager.saveIp(ip);
-                        databaseManager.saveCompute(compute);
-                        return;
-                    }
-                }
-            }
-
-            if(savedCompute != null) {
-                for(String networkId: savedCompute.getIpAddresses().keySet()) {
-                    for(Ip ip: savedCompute.getIpAddresses().get(networkId).getIps()) {
-                        if(!compute.hasIp(networkId, ip.getAddress())) {
-                            ip.setDownTime(messageTimestamp);
-                            databaseManager.saveIp(ip);
-                        }
-                    }
-                }
-                databaseManager.saveCompute(savedCompute);
+    public void processMessage(AuditingMessage message) throws FogbowException{
+        for(ComputeRequest computeRequest: message.getComputes()) {
+            String computeId = computeRequest.getInstanceId() + '@' + message.getFogbowSite();
+            Compute compute = databaseManager.getCompute(computeId);
+            if(compute == null) {
+                processNonExistentCompute(computeRequest, message.getFogbowSite(), message.getCurrentTimestamp());
+            } else {
+                processExistentCompute(compute, computeRequest.getAssignedIps(), message.getCurrentTimestamp());
             }
         }
     }
 
-    private void processFednets(List<FederatedNetwork> federatedNetworks, String site, Timestamp messageTimestamp) throws UnexpectedException {
-        for(FederatedNetwork federatedNetwork : federatedNetworks) {
-            for(String computeId: federatedNetwork.getIpAddresses().keySet()) {
-                String id = computeId + "@" + site;
-                Compute savedCompute = databaseManager.getCompute(id);
-                if(savedCompute == null) {
-                    Compute compute = new Compute(computeId, federatedNetwork.getSerializedSystemUser());
-                    compute.setFederatedIpAddresses(federatedNetwork.getIpAddresses().get(computeId));
-                    for(Ip ip : compute.getFederatedIpAddresses()) {
-                        ip.setUpTime(messageTimestamp);
-                        databaseManager.saveIp(ip);
-                    }
-                    databaseManager.saveCompute(compute);
-                } else {
-                    for(Ip ip: federatedNetwork.getIpAddresses().get(computeId)) {
-                        if(!savedCompute.hasIp(ip.getAddress())) {
-                            ip.setUpTime(messageTimestamp);
-                            databaseManager.saveIp(ip);
-                            ip = databaseManager.getIpByAddress(ip.getAddress());
-                            savedCompute.getFederatedIpAddresses().add(ip);
-                        }
-                    }
-                    for(String networkId : savedCompute.getIpAddresses().keySet()) {
-                        for(Ip ip: savedCompute.getIpAddresses().get(networkId).getIps()) {
-                            if(!federatedNetwork.hasIp(computeId, ip.getAddress())) {
-                                ip.setDownTime(messageTimestamp);
-                                databaseManager.saveIp(ip);
-                            }
-                        }
-                    }
-                    for(Ip ip: savedCompute.getFederatedIpAddresses()) {
-                        if(!federatedNetwork.hasIp(computeId, ip.getAddress())) {
-                            ip.setDownTime(messageTimestamp);
-                            databaseManager.saveIp(ip);
-                        }
-                    }
-                    databaseManager.saveCompute(savedCompute);
+    private void processNonExistentCompute(ComputeRequest computeRequest, String site, Long messageTimestamp) throws FogbowException {
+        Compute compute = new Compute(computeRequest.getSerializedSystemUser(), computeRequest.getInstanceId(), site);
+        databaseManager.saveCompute(compute);
+        for(AssignedIp ip: computeRequest.getAssignedIps()) {
+            saveNewIp(ip, compute.getId(), messageTimestamp);
+        }
+    }
+
+    private void processExistentCompute(Compute compute, List<AssignedIp> ips, Long messageTimestamp) {
+        for(AssignedIp ip : ips) {
+            AssignedIp savedIp = databaseManager.getIp(ip);
+            if(savedIp == null) {
+                saveNewIp(ip, compute.getId(), messageTimestamp);
+            } else {
+                AssignedIpEvent lastIpEventEntry = databaseManager.getLastEventIpEntry(savedIp.getId());
+                if(!lastIpEventEntry.isUpEvent()) {
+                    databaseManager.saveIpEvent(new AssignedIpEvent(savedIp.getId(), messageTimestamp, true));
                 }
             }
         }
+
+        List<AssignedIp> savedIps = databaseManager.getIpsByComputeId(compute.getId());
+        for(AssignedIp ip: savedIps) {
+            if(!isIncomingIp(ip, ips)) {
+                AssignedIpEvent lastIpEventEntry = databaseManager.getLastEventIpEntry(ip.getId());
+                if(lastIpEventEntry.isUpEvent()) {
+                    databaseManager.saveIpEvent(new AssignedIpEvent(ip.getId(), messageTimestamp, false));
+                }
+            }
+        }
+    }
+
+    private void saveNewIp(AssignedIp ip, String computeId, Long timestamp) {
+        ip.setComputeId(computeId);
+        databaseManager.saveIp(ip);
+        ip = databaseManager.getIp(ip);
+        databaseManager.saveIpEvent(new AssignedIpEvent(ip.getId(), timestamp, true));
+    }
+
+    private boolean isIncomingIp(AssignedIp ip, List<AssignedIp> ips) {
+        for(AssignedIp currentIp: ips) {
+            if(ip.getAddress().equals(currentIp.getAddress()) &&
+                ip.getComputeId().equals(currentIp.getComputeId()) &&
+                ip.getNetworkId().equals(currentIp.getNetworkId()) &&
+                ip.getType().equals(currentIp.getType())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

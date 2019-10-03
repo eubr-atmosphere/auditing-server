@@ -3,12 +3,11 @@ package cloud.fogbow.auditingserver.core.models;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "ip_table")
-public class Ip implements Serializable {
+public class AssignedIp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column
@@ -20,22 +19,22 @@ public class Ip implements Serializable {
     private String address;
 
     @Column
-    private Timestamp upTime;
+    private String networkId;
 
     @Column
-    private Timestamp downTime;
+    private String computeId;
 
-    public Ip() {
+    @Column
+    private NetworkType type;
+
+    public AssignedIp() {
     }
-    public Ip(String address, Timestamp upTime) {
+    public AssignedIp(String address, Timestamp upTime) {
         this.address = address;
-        this.upTime = upTime;
     }
 
-    public Ip(String address, Timestamp upTime, Timestamp downTime) {
+    public AssignedIp(String address, Timestamp upTime, Timestamp downTime) {
         this.address = address;
-        this.upTime = upTime;
-        this.downTime = downTime;
     }
 
     public Long getId() {
@@ -54,27 +53,39 @@ public class Ip implements Serializable {
         this.address = address;
     }
 
-    public Timestamp getUpTime() {
-        return upTime;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
-    public void setUpTime(Timestamp upTime) {
-        this.upTime = upTime;
+    public String getNetworkId() {
+        return networkId;
     }
 
-    public Timestamp getDownTime() {
-        return downTime;
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
     }
 
-    public void setDownTime(Timestamp downTime) {
-        this.downTime = downTime;
+    public String getComputeId() {
+        return computeId;
+    }
+
+    public void setComputeId(String computeId) {
+        this.computeId = computeId;
+    }
+
+    public NetworkType getType() {
+        return type;
+    }
+
+    public void setType(NetworkType type) {
+        this.type = type;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Ip ip = (Ip) o;
+        AssignedIp ip = (AssignedIp) o;
         return id.equals(ip.id) &&
                 address.equals(ip.address);
     }

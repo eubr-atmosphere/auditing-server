@@ -1,47 +1,40 @@
 package cloud.fogbow.auditingserver.core.models;
 
+import cloud.fogbow.auditingserver.api.request.entities.ComputeRequest;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import javafx.util.Pair;
 
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
 public class AuditingMessage {
-    private List<Compute> activeComputes;
-    private List<FederatedNetwork> activeFederatedNetworks;
+    private List<ComputeRequest> computes;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSS")
-    private Timestamp currentTimestamp;
+    private Long currentTimestamp;
+
     private String fogbowSite;
 
-    public AuditingMessage(List<Compute> activeComputes, List<FederatedNetwork> federatedNetworks, String fogbowSite) {
-        this.activeComputes = activeComputes;
-        this.activeFederatedNetworks = federatedNetworks;
+    public AuditingMessage(List<ComputeRequest> computes, Long currentTimestamp, String fogbowSite) {
+        this.computes = computes;
+        this.currentTimestamp = currentTimestamp;
         this.fogbowSite = fogbowSite;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AuditingMessage that = (AuditingMessage) o;
-        return Objects.equals(activeComputes, that.activeComputes) &&
-                Objects.equals(activeFederatedNetworks, that.activeFederatedNetworks) &&
-                Objects.equals(currentTimestamp, that.currentTimestamp) &&
-                Objects.equals(fogbowSite, that.fogbowSite);
+    public List<ComputeRequest> getComputes() {
+        return computes;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(activeComputes, activeFederatedNetworks, currentTimestamp, fogbowSite);
+    public void setComputes(List<ComputeRequest> computes) {
+        this.computes = computes;
     }
 
-    public void setActiveComputes(List<Compute> activeComputes) {
-        this.activeComputes = activeComputes;
+    public Long getCurrentTimestamp() {
+        return currentTimestamp;
     }
 
-    public void setActiveFederatedNetworks(List<FederatedNetwork> activeFederatedNetworks) {
-        this.activeFederatedNetworks = activeFederatedNetworks;
+    public void setCurrentTimestamp(Long currentTimestamp) {
+        this.currentTimestamp = currentTimestamp;
     }
 
     public String getFogbowSite() {
@@ -52,19 +45,18 @@ public class AuditingMessage {
         this.fogbowSite = fogbowSite;
     }
 
-    public void setCurrentTimestamp(Timestamp currentTimestamp) {
-        this.currentTimestamp = currentTimestamp;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AuditingMessage that = (AuditingMessage) o;
+        return computes.equals(that.computes) &&
+                currentTimestamp.equals(that.currentTimestamp) &&
+                fogbowSite.equals(that.fogbowSite);
     }
 
-    public List<Compute> getActiveComputes() {
-        return activeComputes;
-    }
-
-    public List<FederatedNetwork> getActiveFederatedNetworks() {
-        return activeFederatedNetworks;
-    }
-
-    public Timestamp getCurrentTimestamp() {
-        return currentTimestamp;
+    @Override
+    public int hashCode() {
+        return Objects.hash(computes, currentTimestamp, fogbowSite);
     }
 }

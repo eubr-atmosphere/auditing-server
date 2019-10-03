@@ -1,6 +1,5 @@
 package cloud.fogbow.auditingserver.api.request;
 
-import cloud.fogbow.auditingserver.api.request.entity.AuditingMessageRequest;
 import cloud.fogbow.auditingserver.core.ApplicationFacade;
 import cloud.fogbow.auditingserver.core.models.AuditingMessage;
 import cloud.fogbow.auditingserver.util.Constants;
@@ -8,7 +7,6 @@ import cloud.fogbow.auditingserver.util.Messages;
 import cloud.fogbow.common.exceptions.FogbowException;
 import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
-
 
 @CrossOrigin
 @RestController
@@ -20,12 +18,12 @@ public class Auditing {
 
     @RequestMapping(method = RequestMethod.POST)
     public void registerMessage(
-            @RequestBody AuditingMessageRequest message)
+            @RequestBody AuditingMessage message)
             throws FogbowException {
 
         try {
             LOGGER.info(Messages.Api.REGISTERING_AUDITING_MESSAGE);
-            ApplicationFacade.getInstance().registerMessage(message.getAuditingMessage());
+            ApplicationFacade.getInstance().registerMessage(message);
         } catch (Exception e) {
             LOGGER.debug(e);
             throw e;
