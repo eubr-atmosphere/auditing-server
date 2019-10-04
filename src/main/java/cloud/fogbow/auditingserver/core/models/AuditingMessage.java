@@ -1,10 +1,6 @@
 package cloud.fogbow.auditingserver.core.models;
 
 import cloud.fogbow.auditingserver.api.request.entities.ComputeRequest;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import javafx.util.Pair;
-
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 

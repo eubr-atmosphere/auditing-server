@@ -28,7 +28,7 @@ public class Auditing {
 
         try {
             LOGGER.info(Messages.Api.REGISTERING_AUDITING_MESSAGE);
-            String publicKeyPath = HomeDir.getPath() + "/clientkeys" + message.getClientId();
+            String publicKeyPath = HomeDir.getPath() + "/clientkeys/" + message.getClientId() + ".pub'";
             RSAPublicKey publicKey = CryptoUtil.getPublicKey(publicKeyPath);
             if(!CryptoUtil.verify(publicKey, message.toString(), messageSignature)) {
                 throw new UnauthorizedAuditingMessageException("The signature doesn't match the specifications");
