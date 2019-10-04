@@ -2,10 +2,8 @@ package cloud.fogbow.auditingserver.core;
 
 import cloud.fogbow.auditingserver.api.response.ComputeResponse;
 import cloud.fogbow.auditingserver.core.models.AuditingMessage;
-import cloud.fogbow.auditingserver.core.models.Compute;
-import cloud.fogbow.common.exceptions.UnexpectedException;
+import cloud.fogbow.common.exceptions.FogbowException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ApplicationFacade {
@@ -27,18 +25,11 @@ public class ApplicationFacade {
         }
     }
 
-    public void registerMessage(AuditingMessage message) throws UnexpectedException {
+    public void registerMessage(AuditingMessage message) throws FogbowException {
         auditingController.processMessage(message);
     }
 
     public List<ComputeResponse> getAllComputes() {
-        List<Compute> computes = computeController.getAll();
-        List<ComputeResponse> computeResponses = new ArrayList<>();
-        for(Compute compute: computes) {
-            computeResponses.add(
-                new ComputeResponse(compute.getSystemUser().getName(), compute.getIpAddresses(), compute.getFederatedIpAddresses())
-            );
-        }
-        return computeResponses;
+        return null;
     }
 }

@@ -11,22 +11,12 @@ import cloud.fogbow.common.util.SerializedEntityHolder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 @Entity
 @Table(name = "compute_table")
 public class Compute {
     private final String ID_SEPARATOR = "@";
-
-    @ElementCollection
-    private Map<String, IpGroup> ipAddresses;
-
-    @Column
-    @OneToMany
-    private List<Ip> federatedIpAddresses;
 
     @Column
     @Size(max = SystemUser.SERIALIZED_SYSTEM_USER_MAX_SIZE)
@@ -45,82 +35,18 @@ public class Compute {
     public Compute() {
     }
 
-    public Compute(Map<String, IpGroup>ipAddresses, SystemUser systemUser, String instanceId) {
-        Properties properties = PropertiesUtil.readProperties(HomeDir.getPath() + Constants.CONF_FILE_KEY);
-        this.ipAddresses = ipAddresses;
+    public Compute(SystemUser systemUser, String instanceId, String site) {
         this.systemUser = systemUser;
         this.instanceId = instanceId;
-        this.id = instanceId + ID_SEPARATOR + properties.getProperty(Constants.SITE_KEY);
+        this.id = instanceId + ID_SEPARATOR + site;
     }
 
-    public Compute(Map<String, IpGroup> ipAddresses, String systemUser, String instanceId) throws UnexpectedException{
+    public Compute(String systemUser, String instanceId, String site) throws UnexpectedException{
         Properties properties = PropertiesUtil.readProperties(HomeDir.getPath() + Constants.CONF_FILE_KEY);
-        this.ipAddresses = ipAddresses;
         this.serializedSystemUser = systemUser;
         this.instanceId = instanceId;
-        this.id = instanceId + ID_SEPARATOR + properties.getProperty(Constants.SITE_KEY);
+        this.id = instanceId + ID_SEPARATOR + site;
         deserializeSystemUser();
-    }
-
-    public Compute(String serializedSystemUser, String instanceId) throws UnexpectedException{
-        this.serializedSystemUser = serializedSystemUser;
-        this.instanceId = instanceId;
-        deserializeSystemUser();
-    }
-
-    public Compute(SystemUser systemUser, String instanceId) {
-        this.systemUser = systemUser;
-        this.instanceId = instanceId;
-    }
-
-    public List<Ip> getFederatedIpAddresses() {
-        return federatedIpAddresses;
-    }
-
-    public void setFederatedIpAddresses(List<Ip> federatedIpAddresses) {
-        this.federatedIpAddresses = federatedIpAddresses;
-    }
-
-    public boolean hasNetwork(String networkId) {
-        return this.getIpAddresses().containsKey(networkId);
-    }
-
-    public boolean hasIp(String networkId, String address) {
-        for(Ip ip: this.getIpAddresses().get(networkId).getIps()) {
-            if(ip.getAddress().equals(address)) {
-                return true;
-            }
-        }
-        for(Ip ip: this.getFederatedIpAddresses()) {
-            if(ip.getAddress().equals(address)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean hasIp(String address) {
-        for(String networkId: this.getIpAddresses().keySet()) {
-            for(Ip ip : this.getIpAddresses().get(networkId).getIps()) {
-                if(ip.getAddress().equals(address)) {
-                    return true;
-                }
-            }
-        }
-        for(Ip ip: this.getFederatedIpAddresses()) {
-            if(ip.getAddress().equals(address)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Map<String, IpGroup> getIpAddresses() {
-        return ipAddresses;
-    }
-
-    public void setIpAddresses(Map<String, IpGroup> ipAddresses) {
-        this.ipAddresses = ipAddresses;
     }
 
     public String getSerializedSystemUser() {
@@ -171,21 +97,5 @@ public class Compute {
         } catch(ClassNotFoundException exception) {
             throw new UnexpectedException(Messages.Exception.UNABLE_TO_DESERIALIZE_SYSTEM_USER);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Compute compute = (Compute) o;
-        return Objects.equals(ipAddresses, compute.ipAddresses) &&
-                Objects.equals(serializedSystemUser, compute.serializedSystemUser) &&
-                Objects.equals(instanceId, compute.instanceId) &&
-                Objects.equals(id, compute.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(ipAddresses, serializedSystemUser, instanceId, id);
     }
 }
