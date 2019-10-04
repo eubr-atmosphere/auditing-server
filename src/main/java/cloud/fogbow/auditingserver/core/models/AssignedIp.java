@@ -95,5 +95,8 @@ public class AssignedIp implements Serializable {
         return Objects.hash(id, address);
     }
 
-
+    @Override
+    public String toString() {
+        return this.address += this.computeId += this.networkId += this.type.getValue();
+    }
 }

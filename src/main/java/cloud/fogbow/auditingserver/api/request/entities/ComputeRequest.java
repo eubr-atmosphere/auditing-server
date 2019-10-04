@@ -57,4 +57,13 @@ public class ComputeRequest {
     public int hashCode() {
         return Objects.hash(instanceId, assignedIps, serializedSystemUser);
     }
+
+    @Override
+    public String toString() {
+        String value = this.instanceId + this.serializedSystemUser;
+        for(AssignedIp ip : assignedIps) {
+            value += ip.toString();
+        }
+        return value;
+    }
 }
