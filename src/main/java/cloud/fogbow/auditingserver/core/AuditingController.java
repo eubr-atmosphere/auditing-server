@@ -38,6 +38,7 @@ public class AuditingController {
 
     private void processExistentCompute(Compute compute, List<AssignedIp> ips, Long messageTimestamp) {
         for(AssignedIp ip : ips) {
+            ip.setComputeId(compute.getId());
             AssignedIp savedIp = databaseManager.getIp(ip);
             if(savedIp == null) {
                 saveNewIp(ip, compute.getId(), messageTimestamp);

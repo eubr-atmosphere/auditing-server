@@ -15,6 +15,8 @@ public class AuditingMessage {
 
     private String fogbowSite;
 
+    private String clientId;
+
     public AuditingMessage(List<ComputeRequest> computes, Long currentTimestamp, String fogbowSite) {
         this.computes = computes;
         this.currentTimestamp = currentTimestamp;
@@ -43,6 +45,14 @@ public class AuditingMessage {
 
     public void setFogbowSite(String fogbowSite) {
         this.fogbowSite = fogbowSite;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     @Override
