@@ -69,4 +69,14 @@ public class AuditingMessage {
     public int hashCode() {
         return Objects.hash(computes, currentTimestamp, fogbowSite);
     }
+
+    @Override
+    public String toString() {
+        String value = "";
+        value += this.clientId + this.getCurrentTimestamp() + this.getFogbowSite();
+        for(ComputeRequest computeRequest : this.computes) {
+            value += computeRequest.toString();
+        }
+        return value;
+    }
 }
