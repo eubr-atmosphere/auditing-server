@@ -17,7 +17,7 @@ public class Auditing {
 
     @RequestMapping(method = RequestMethod.POST)
     public void registerMessage(
-            @RequestBody String message,
+            @RequestBody EncryptedMessage message,
             @RequestHeader(value = Constants.SYSTEM_SIGNATURE_HEADER_KEY) String messageSignature,
             @RequestHeader(value = Constants.SYSTEM_SIGNATURE_HEADER_KEY) String clientId,
             @RequestHeader(value = Constants.SYSTEM_SIGNATURE_HEADER_KEY) String key)
@@ -25,10 +25,21 @@ public class Auditing {
 
         try {
             LOGGER.info(Messages.Api.REGISTERING_AUDITING_MESSAGE);
-            ApplicationFacade.getInstance().registerMessage(message, messageSignature, clientId, key);
+            ApplicationFacade.getInstance().registerMessage(message.getMessage(), messageSignature, clientId, key);
         } catch (Exception e) {
             LOGGER.debug(e);
             throw e;
+        }
+    }
+    private class EncryptedMessage {
+        private String message;
+
+        public EncryptedMessage() {}
+
+        public EncryptedMessage(String message) {this.message = message;}
+
+        public String getMessage() {
+            return message;
         }
     }
 }
