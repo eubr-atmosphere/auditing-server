@@ -30,7 +30,7 @@ container_id=`sudo docker run --name auditing-server -p 8085:8085 -idt $image`
 sudo docker exec $container_id /bin/bash -c "mkdir src/main/resources/private"
 sudo docker cp ./auditing-server.conf $container_id:/root/auditing-server/src/main/resources/private
 sudo docker cp ./application.properties $container_id:/root/auditing-server/src/main/resources/
-sudo bash generate-ssh-key-pair server-key 2048
+sudo bash generate-ssh-key-pair server-key 1024
 mv server-key private.key
 mv server-key.pub public.key
 sudo docker cp ./private.key $container_id:/root/auditing-server/src/main/resources/private
