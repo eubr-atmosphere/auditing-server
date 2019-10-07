@@ -12,7 +12,7 @@ db_password=$(grep ^db_password general.conf | awk -F "=" '{print $2}')
 sed -i "s,spring.datasource.url.*,spring.datasource.url=jdbc:postgresql://$db_url," ./application.properties
 sed -i "s,spring.datasource.username.*,spring.datasource.username=$db_user," ./application.properties
 sed -i "s,spring.datasource.password.*,spring.datasource.password=$db_password," ./application.properties
-sed -i "s,server.port.**,server.port=8085," ./application.properties
+sed -i "s,server.port.*,server.port=8085," ./application.properties
 
 git clone https://github.com/eubr-atmosphere/auditing-server.git
 cp general.conf auditing-server/database-setup
