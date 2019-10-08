@@ -55,7 +55,7 @@ public class ApplicationFacade {
         String simKey = CryptoUtil.decrypt(key, privateKey);
         String body = CryptoUtil.decryptAES(simKey.getBytes(), message);
 
-        String publicKeyPath = HomeDir.getPath() + "/clientkeys/" + clientId + ".pub";
+        String publicKeyPath = HomeDir.getPath() + "clientkeys/" + clientId + ".pub";
         RSAPublicKey publicKey = CryptoUtil.getPublicKey(publicKeyPath);
         if(!CryptoUtil.verify(publicKey, body, messageSignature)) {
             throw new UnauthorizedAuditingMessageException("The signature doesn't match the specifications");
