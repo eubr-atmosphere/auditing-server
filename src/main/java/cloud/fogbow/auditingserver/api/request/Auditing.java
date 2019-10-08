@@ -19,8 +19,8 @@ public class Auditing {
     public void registerMessage(
             @RequestBody EncryptedMessage message,
             @RequestHeader(value = Constants.SYSTEM_SIGNATURE_HEADER_KEY) String messageSignature,
-            @RequestHeader(value = Constants.SYSTEM_SIGNATURE_HEADER_KEY) String clientId,
-            @RequestHeader(value = Constants.SYSTEM_SIGNATURE_HEADER_KEY) String key)
+            @RequestHeader(value = Constants.SYSTEM_CLIENT_ID_HEADER_KEY) String clientId,
+            @RequestHeader(value = Constants.SYSTEM_SYMMETRIC_KEY_HEADER_KEY) String key)
             throws Exception {
 
         try {
@@ -31,7 +31,7 @@ public class Auditing {
             throw e;
         }
     }
-    private class EncryptedMessage {
+    private static class EncryptedMessage {
         private String message;
 
         public EncryptedMessage() {}
