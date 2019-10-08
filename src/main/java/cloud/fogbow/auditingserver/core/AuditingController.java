@@ -4,11 +4,12 @@ import cloud.fogbow.auditingserver.api.request.entities.ComputeRequest;
 import cloud.fogbow.auditingserver.core.datastore.DatabaseManager;
 import cloud.fogbow.auditingserver.core.models.*;
 import cloud.fogbow.common.exceptions.FogbowException;
+import org.apache.log4j.Logger;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 public class AuditingController {
+    private static final Logger LOGGER = Logger.getLogger(AuditingController.class);
 
     private DatabaseManager databaseManager;
 
@@ -17,6 +18,7 @@ public class AuditingController {
     }
 
     public void processMessage(AuditingMessage message) throws FogbowException{
+        LOGGER.info("processing message with " + message.getComputes().size() + "computes");
         for(ComputeRequest computeRequest: message.getComputes()) {
             String computeId = computeRequest.getInstanceId() + '@' + message.getFogbowSite();
             Compute compute = databaseManager.getCompute(computeId);
@@ -30,6 +32,7 @@ public class AuditingController {
 
     private void processNonExistentCompute(ComputeRequest computeRequest, String site, Long messageTimestamp) throws FogbowException {
         Compute compute = new Compute(computeRequest.getSerializedSystemUser(), computeRequest.getInstanceId(), site);
+        LOGGER.info("saving non existent compute in the database");
         databaseManager.saveCompute(compute);
         for(AssignedIp ip: computeRequest.getAssignedIps()) {
             saveNewIp(ip, compute.getId(), messageTimestamp);
@@ -62,6 +65,7 @@ public class AuditingController {
     }
 
     private void saveNewIp(AssignedIp ip, String computeId, Long timestamp) {
+        LOGGER.info("saving new ip with address" + ip.getAddress());
         ip.setComputeId(computeId);
         databaseManager.saveIp(ip);
         ip = databaseManager.getIp(ip);

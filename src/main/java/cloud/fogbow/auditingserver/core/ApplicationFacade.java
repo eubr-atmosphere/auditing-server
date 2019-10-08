@@ -9,6 +9,7 @@ import cloud.fogbow.common.util.CryptoUtil;
 import cloud.fogbow.common.util.HomeDir;
 import cloud.fogbow.common.util.ServiceAsymmetricKeysHolder;
 import com.google.gson.Gson;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -17,6 +18,8 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.List;
 
 public class ApplicationFacade {
+    private static final Logger LOGGER = Logger.getLogger(ApplicationFacade.class);
+
     private static ApplicationFacade instance;
     private AuditingController auditingController;
     private ComputeController computeController;
@@ -44,6 +47,7 @@ public class ApplicationFacade {
     }
 
     public void registerMessage(String message, String messageSignature, String clientId, String key) throws Exception {
+        LOGGER.info("Receiving an auditing message");
         AuditingMessage auditingMessage = handleSecurityIssues(message, messageSignature, clientId, key);
         auditingController.processMessage(auditingMessage);
     }
