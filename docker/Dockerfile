@@ -23,6 +23,11 @@ RUN \
   git clone https://github.com/fogbow/common.git && \
   (cd common && git checkout develop && mvn install -Dmaven.test.skip=true)
 
+# Installing AS
+RUN \
+  git clone https://github.com/fogbow/authentication-service.git && \
+  (cd authentication-service && git checkout develop && mvn install -Dmaven.test.skip=true)
+
 # Installing client
 RUN \
   git clone https://github.com/eubr-atmosphere/auditing-server.git && \
