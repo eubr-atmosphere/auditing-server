@@ -94,6 +94,12 @@
 			<version>1.4.193</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>fogbow</groupId>
+			<artifactId>fogbow-as</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
