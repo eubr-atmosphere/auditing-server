@@ -49,6 +49,7 @@ public class ApplicationFacade {
     public void registerMessage(String message, String messageSignature, String clientId, String key) throws Exception {
         LOGGER.info("Receiving an auditing message");
         AuditingMessage auditingMessage = handleSecurityIssues(message, messageSignature, clientId, key);
+        LOGGER.info(new Gson().toJson(auditingMessage));
         auditingController.processMessage(auditingMessage);
     }
 

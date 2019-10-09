@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class AuditingMessage {
-    private List<ComputeRequest> computes;
+    private List<ComputeRequest> activeComputes;
 
     private Long currentTimestamp;
 
@@ -14,17 +14,17 @@ public class AuditingMessage {
     private String clientId;
 
     public AuditingMessage(List<ComputeRequest> computes, Long currentTimestamp, String fogbowSite) {
-        this.computes = computes;
+        this.activeComputes = computes;
         this.currentTimestamp = currentTimestamp;
         this.fogbowSite = fogbowSite;
     }
 
-    public List<ComputeRequest> getComputes() {
-        return computes;
+    public List<ComputeRequest> getActiveComputes() {
+        return activeComputes;
     }
 
-    public void setComputes(List<ComputeRequest> computes) {
-        this.computes = computes;
+    public void setActiveComputes(List<ComputeRequest> activeComputes) {
+        this.activeComputes = activeComputes;
     }
 
     public Long getCurrentTimestamp() {
@@ -56,21 +56,21 @@ public class AuditingMessage {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AuditingMessage that = (AuditingMessage) o;
-        return computes.equals(that.computes) &&
+        return activeComputes.equals(that.activeComputes) &&
                 currentTimestamp.equals(that.currentTimestamp) &&
                 fogbowSite.equals(that.fogbowSite);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(computes, currentTimestamp, fogbowSite);
+        return Objects.hash(activeComputes, currentTimestamp, fogbowSite);
     }
 
     @Override
     public String toString() {
         String value = "";
         value += this.clientId + this.getCurrentTimestamp() + this.getFogbowSite();
-        for(ComputeRequest computeRequest : this.computes) {
+        for(ComputeRequest computeRequest : this.activeComputes) {
             value += computeRequest.toString();
         }
         return value;

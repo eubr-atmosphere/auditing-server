@@ -18,8 +18,8 @@ public class AuditingController {
     }
 
     public void processMessage(AuditingMessage message) throws FogbowException{
-        LOGGER.info("processing message with " + message.getComputes().size() + "computes");
-        for(ComputeRequest computeRequest: message.getComputes()) {
+        LOGGER.info("processing message with " + message.getActiveComputes().size() + "computes");
+        for(ComputeRequest computeRequest: message.getActiveComputes()) {
             String computeId = computeRequest.getInstanceId() + '@' + message.getFogbowSite();
             Compute compute = databaseManager.getCompute(computeId);
             if(compute == null) {
