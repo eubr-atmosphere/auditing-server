@@ -5,7 +5,7 @@ GENERAL_CONF_FILE_PATH="general.conf"
 IMAGE_NAME="eubraatmosphere/auditing-database"
 CONTAINER_NAME="auditing-database"
 
-CONTAINER_PORT=5432
+CONTAINER_PORT=$(grep ^container_port $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 
 DB_USER=$(grep ^db_user $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 DB_PASSWORD=$(grep ^db_password $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
@@ -27,7 +27,7 @@ sudo docker stop $CONTAINER_NAME
 sudo docker rm $CONTAINER_NAME
 
 sudo docker run -tdi --name $CONTAINER_NAME \
-	-p $CONTAINER_PORT:$CONTAINER_PORT \
+	-p $CONTAINER_PORT:5432 \
 	-e DB_USER=$DB_USER \
 	-e DB_PASS=$DB_PASSWORD \
 	-e DB_NAME=$DB_NAME \
