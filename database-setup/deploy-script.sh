@@ -5,7 +5,7 @@ GENERAL_CONF_FILE_PATH="general.conf"
 IMAGE_NAME="eubraatmosphere/auditing-database"
 CONTAINER_NAME="auditing-database"
 
-CONTAINER_PORT=$(grep ^container_port $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
+CONTAINER_PORT=$(grep ^db_container_port $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 
 DB_USER=$(grep ^db_user $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 DB_PASSWORD=$(grep ^db_password $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
