@@ -7,12 +7,12 @@ CONTAINER_NAME="auditing-database"
 
 CONTAINER_PORT=$(grep ^container_port $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 
-DB_USER="auditinguser"
+DB_USER=$(grep ^db_user $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 DB_PASSWORD=$(grep ^db_password $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 
 DB_NAME=fogbowauditing
 
-DB_DATA_DIR=/home/ubuntu/auditing/data
+DB_DATA_DIR=~/fogbow-atm-components/auditing-server/data
 mkdir -p $DB_DATA_DIR
 CONTAINER_DATA_DIR="/var/lib/postgresql/data"
 
