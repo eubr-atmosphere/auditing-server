@@ -10,7 +10,7 @@ CONTAINER_PORT=$(grep ^db_container_port $GENERAL_CONF_FILE_PATH | awk -F "=" '{
 DB_USER=$(grep ^db_user $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 DB_PASSWORD=$(grep ^db_password $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 
-DB_NAME=fogbowauditing
+DB_NAME=$(grep ^db_name $GENERAL_CONF_FILE_PATH | awk -F "=" '{print $2}')
 
 DB_DATA_DIR=~/fogbow-atm-components/auditing-server/data
 mkdir -p $DB_DATA_DIR
